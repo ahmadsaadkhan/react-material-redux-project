@@ -1,4 +1,4 @@
-import {useEffect} from 'react'
+import { useState, useEffect} from 'react'
 import {Container, AppBar, Typography, Grow, Grid } from '@material-ui/core';
 import {useDispatch} from 'react-redux'
 
@@ -8,17 +8,14 @@ import Form from './components/form/Form'
 import memories from './images/memories.png';
 import useStyles from './styles';
 
-
-
-
-
 function App() {
+  const [currentId, setCurrentId] = useState(null)
   const classes = useStyles();
   const dispatch = useDispatch();
 // Use Effech Hook
   useEffect(()=> {
     dispatch(getPosts());
-  }, [dispatch])
+  }, [currentId, dispatch])
 
   return (
    <Container maxWidth="lg">
@@ -28,12 +25,12 @@ function App() {
      </AppBar>
      <Grow in>
        <Container>
-         <Grid container justify="space-between" alignItems="stretch" spacing={3}>
+         <Grid className={classes.mainContainer} container justify="space-between" alignItems="stretch" spacing={3}>
            <Grid item xs={12} sm={7}>
-              <Posts />
+              <Posts setCurrentId={setCurrentId} />
            </Grid>
            <Grid item xs={12} sm={4}>
-              <Form />
+              <Form currentId={currentId} setCurrentId={setCurrentId}/>
            </Grid>
          </Grid>
        </Container>
