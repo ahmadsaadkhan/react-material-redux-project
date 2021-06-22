@@ -1,11 +1,11 @@
-import { FETCH_ALL, CREATE, UPDATE, DELETE } from '../contants/actionTypes';
+import { FETCH_ALL, CREATE, UPDATE, DELETE } from '../constants/actionTypes';
 
-export default (posts = [], action) => {
+const reducers = (posts = [], action) => {
     switch (action.type) {
         case DELETE:
             return posts.filter((post) => post._id !== action.payload)
         case UPDATE:
-            return posts.map((post) => posts.id === action.payload.id ? action.payload : post)
+            return posts.map((post) => post._id === action.payload._id ? action.payload : post)
         case FETCH_ALL:
             return action.payload;
         case CREATE:
@@ -14,3 +14,5 @@ export default (posts = [], action) => {
             return posts;
     }
 }
+
+export default reducers;

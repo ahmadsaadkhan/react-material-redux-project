@@ -10,9 +10,9 @@ import { createPost, updatePost } from '../../actions/posts';
     const post = useSelector((state) => currentId ? state.posts.find((p) => p._id === currentId ) : null)
     const classes = useStyles();
     const dispatch = useDispatch();
-
+    const user = JSON.parse(localStorage.getItem('profile'));
     const [postData, setPostData] = useState({
-        creator: '', title:'', message:'', tags:'', selectedFile:''
+        title:'', message:'', tags:'', selectedFile:''
     })
 
     useEffect(() => {
@@ -22,29 +22,29 @@ import { createPost, updatePost } from '../../actions/posts';
     const handleSubmit = (e) => {
         e.preventDefault();
         if(currentId){
-            dispatch(updatePost(currentId, postData))
+            dispatch(updatePost(currentId, { ...postData, name: user?.result?.name }))
         } else {
-            dispatch(createPost(postData))
+            dispatch(createPost({ ...postData, name: user?.result?.name }));
         }
         clear();
     }
     const clear = () => {
         setCurrentId(null)
-        setPostData({ creator: '', title:'', message:'', tags:'', selectedFile:''})
+        setPostData({ title:'', message:'', tags:'', selectedFile:''})
     }
-
+    if(!user?.result?.name){
+        return(
+            <Paper className={classes.paper}>
+                <Typography variant="h6" align="center">
+                Please signin to add memor
+                </Typography>
+            </Paper>
+        )
+    }
     return ( 
         <Paper className={classes.paper}>
-            <form autocomplete="off" novalidate className={`${classes.root} ${classes.form}`} onSubmit={handleSubmit}>
-                <Typography variant="6">{currentId ? `Editing` : `Creating`} a Memory</Typography>
-                <TextField 
-                name="Creator" 
-                variant="outlined" 
-                label="Creator" 
-                fullWidth 
-                value = {postData.creator}
-                onChange = { (e) => setPostData({ ...postData, creator: e.target.value })}
-                />
+            <form autoComplete="off" noValidate className={`${classes.root} ${classes.form}`} onSubmit={handleSubmit}>
+                <Typography variant="h6">{currentId ? `Editing` : `Creating`} a Memory</Typography>
                 <TextField 
                 name="Title" 
                 variant="outlined" 
@@ -76,8 +76,8 @@ import { createPost, updatePost } from '../../actions/posts';
                     onDone={({base64}) => setPostData({ ...postData, selectedFile: base64})}
                 />
                 </div>
-                <Button className={classes.buttonSubmit} variant="container" color="primary" size="large" type="submit" fullwidth >Submit</Button>
-                <Button className={classes.buttonSubmit} variant="contained" color="secondary" size="small" onClick={clear} fullwidth >Clear</Button>
+                <Button className={classes.buttonSubmit} variant="contained" color="primary" size="large" type="submit" fullWidth >Submit</Button>
+                <Button variant="contained" color="secondary" size="large" onClick={clear} fullWidth >Clear</Button>
             </form>
         </Paper>
      );
